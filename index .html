@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduEarn - স্টুডেন্ট নলেজ প্ল্যাটফর্ম</title>
+    <style>
+        :root {
+            --primary: #1877f2;
+            --secondary: #42b72a;
+            --bg: #f0f2f5;
+            --white: #ffffff;
+        }
+
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; }
+        .hidden { display: none !important; }
+
+        /* Navigation */
+        nav {
+            background: var(--white); padding: 10px 5%; display: flex; 
+            justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000;
+        }
+        .logo { font-size: 26px; font-weight: bold; color: var(--primary); cursor: pointer; }
+        .nav-links button { background: none; border: none; font-size: 16px; margin-left: 15px; cursor: pointer; color: #555; font-weight: 600; }
+        .nav-links button:hover { color: var(--primary); }
+
+        /* Layout */
+        .container { max-width: 1100px; margin: 20px auto; display: flex; gap: 20px; padding: 0 15px; }
+        .sidebar { width: 250px; position: sticky; top: 80px; height: fit-content; }
+        .sidebar-card { background: var(--white); border-radius: 8px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .feed { flex: 1; }
+        .card { background: var(--white); border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* Forms & Buttons */
+        input, textarea, select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        .btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-sec { background: var(--secondary); }
+
+        /* Leaderboard Table */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+
+        /* Certificate Modal */
+        #cert-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; display: flex; justify-content: center; align-items: center; }
+        .cert-box { background: white; padding: 40px; border: 15px solid var(--primary); text-align: center; max-width: 700px; }
+
+        @media (max-width: 768px) { .sidebar { display: none; } .container { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+    <div id="auth-section" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 5000; display: flex; justify-content: center; align-items: center;">
+        <div class="card" style="width: 350px; text-align: center;">
+            <h2 style="color: var(--primary);">EduEarn</h2>
+            <div id="login-form">
+                <input type="email" placeholder="ইমেইল" id="l-email">
+                <input type="password" placeholder="পাসওয়ার্ড" id="l-pass">
+                <button class="btn" style="width: 100%;" onclick="handleLogin()">লগইন</button>
+                <p>নতুন? <a href="#" onclick="toggleAuth()">রেজিস্ট্রেশন করুন</a></p>
+            </div>
+            <div id="signup-form" class="hidden">
+                <input type="text" placeholder="পুরো নাম" id="s-name">
+                <input type="email" placeholder="ইমেইল" id="s-email">
+                <button class="btn btn-sec" style="width: 100%;" onclick="toggleAuth()">অ্যাকাউন্ট খুলুন</button>
+                <p>আছে? <a href="#" onclick="toggleAuth()">লগইন করুন</a></p>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <div class="logo" onclick="showSection('home')">EduEarn</div>
+        <div class="nav-links">
+            <button onclick="showSection('home')">হোম</button>
+            <button onclick="showSection('leaderboard')">লিডারবোর্ড</button>
+            <button onclick="showSection('dashboard')">ড্যাশবোর্ড</button>
+            <button onclick="location.reload()" style="color: red;">লগআউট</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-card">
+                <h3>ক্যাটাগরি</h3>
+                <p onclick="alert('ফিল্টার হচ্ছে...')">🔬 বিজ্ঞান</p>
+                <p onclick="alert('ফিল্টার হচ্ছে...')">🌙 ধর্ম</p>
+                <p onclick="alert('ফিল্টার হচ্ছে...')">📖 সাহিত্য</p>
+            </div>
+        </div>
+
+        <div id="home-section" class="feed">
+            <div class="card">
+                <textarea id="postText" placeholder="আপনার জ্ঞান শেয়ার করুন..."></textarea>
+                <button class="btn" onclick="addPost()">পাবলিশ</button>
+            </div>
+            <div id="posts-container">
+                <div class="card">
+                    <span style="color: var(--secondary); font-weight: bold;">★ ফিচারড পোস্ট</span>
+                    <h3>কিভাবে ফ্রিল্যান্সিং শুরু করবেন?</h3>
+                    <p>দক্ষতা অর্জনই হলো প্রথম ধাপ। এরপর সঠিক প্ল্যাটফর্ম নির্বাচন...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="leaderboard-section" class="feed hidden">
+            <div class="card">
+                <h2>🏆 টপ রাইটার্স</h2>
+                <table>
+                    <tr style="background: #f8f9fa;"><th>র‍্যাঙ্ক</th><th>নাম</th><th>পয়েন্ট</th></tr>
+                    <tr><td>🥇 ১</td><td>রাহাত আহমেদ</td><td>৫২০</td></tr>
+                    <tr><td>🥈 ২</td><td>সুমি আক্তার</td><td>৪৮০</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="dashboard-section" class="feed hidden">
+            <div class="card" style="background: var(--primary); color: white; text-align: center;">
+                <h3>আপনার ব্যালেন্স</h3>
+                <h1>৳ ১,৫০০</h1>
+                <button class="btn" style="background: white; color: var(--primary);" onclick="checkCert()">সার্টিফিকেট দেখুন</button>
+            </div>
+            <div class="card">
+                <h3>সাম্প্রতিক নোটিফিকেশন</h3>
+                <p>✅ আপনার গত পোস্টে ৪.৮ রেটিং আসায় ৳ ২০০ যোগ হয়েছে।</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="cert-modal" class="hidden">
+        <div class="cert-box">
+            <h1 style="color: var(--primary);">EduEarn Recognition</h1>
+            <p>এই সার্টিফিকেটটি প্রদান করা হলো</p>
+            <h2 id="user-cert-name">ইউজার</h2>
+            <p>আমাদের প্ল্যাটফর্মে অসাধারণ কন্টেন্ট কন্ট্রিবিউশনের জন্য।</p>
+            <button class="btn" onclick="window.print()">প্রিন্ট করুন</button>
+            <button class="btn" style="background: #333;" onclick="checkCert()">বন্ধ করুন</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = "শিক্ষার্থী";
+
+        function toggleAuth() {
+            document.getElementById('login-form').classList.toggle('hidden');
+            document.getElementById('signup-form').classList.toggle('hidden');
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('l-email').value;
+            if(email) {
+                currentUser = email.split('@')[0];
+                document.getElementById('auth-section').classList.add('hidden');
+            } else { alert("ইমেইল দিন"); }
+        }
+
+        function showSection(id) {
+            ['home', 'leaderboard', 'dashboard'].forEach(s => {
+                document.getElementById(s + '-section').classList.add('hidden');
+            });
+            document.getElementById(id + '-section').classList.remove('hidden');
+        }
+
+        function addPost() {
+            const text = document.getElementById('postText').value;
+            if(!text) return;
+            const html = `<div class="card"><strong>${currentUser}</strong><p>${text}</p></div>`;
+            document.getElementById('posts-container').insertAdjacentHTML('afterbegin', html);
+            document.getElementById('postText').value = "";
+        }
+
+        function checkCert() {
+            document.getElementById('user-cert-name').innerText = currentUser;
+            document.getElementById('cert-modal').classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
